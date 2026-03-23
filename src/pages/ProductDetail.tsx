@@ -19,10 +19,10 @@ const ProductDetail = () => {
         <p className="text-sm text-muted-foreground" dir="rtl">قطع غيار &gt; ذراع تحكم</p>
         <div className="flex items-center gap-3">
           <button className="active:scale-95 transition-transform"><Heart className="w-5 h-5 text-muted-foreground" /></button>
-          <div className="relative">
+          <button onClick={() => navigate("/cart")} className="relative active:scale-95 transition-transform">
             <ShoppingCart className="w-5 h-5 text-foreground" />
             <span className="absolute -top-1.5 -right-1.5 bg-destructive text-primary-foreground text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">3</span>
-          </div>
+          </button>
         </div>
       </header>
 
