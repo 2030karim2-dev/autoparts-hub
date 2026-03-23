@@ -2,11 +2,11 @@ import { Home, LayoutGrid, ClipboardList, MessageCircle, User } from "lucide-rea
 import { NavLink } from "react-router-dom";
 
 const tabs = [
-  { to: "/", icon: Home, label: "الرئيسية", labelEn: "Home" },
-  { to: "/categories", icon: LayoutGrid, label: "الأقسام", labelEn: "Categories" },
-  { to: "/orders", icon: ClipboardList, label: "الطلبات", labelEn: "Orders" },
-  { to: "/chat", icon: MessageCircle, label: "المحادثة", labelEn: "Chat" },
-  { to: "/profile", icon: User, label: "حسابي", labelEn: "Profile" },
+  { to: "/profile", icon: User, label: "حسابي" },
+  { to: "/chat", icon: MessageCircle, label: "المحادثة" },
+  { to: "/orders", icon: ClipboardList, label: "الطلبات" },
+  { to: "/categories", icon: LayoutGrid, label: "الأقسام" },
+  { to: "/", icon: Home, label: "الرئيسية" },
 ];
 
 const BottomNav = () => (
@@ -15,14 +15,22 @@ const BottomNav = () => (
       <NavLink
         key={to}
         to={to}
+        end={to === "/"}
         className={({ isActive }) =>
-          `flex flex-col items-center gap-0.5 text-[11px] font-medium transition-colors ${
+          `flex flex-col items-center gap-0.5 text-[11px] font-medium transition-colors relative ${
             isActive ? "text-primary" : "text-muted-foreground"
           }`
         }
       >
-        <Icon className="w-5 h-5" strokeWidth={2} />
-        <span>{label}</span>
+        {({ isActive }) => (
+          <>
+            {isActive && (
+              <span className="absolute -top-2.5 w-8 h-0.5 bg-primary rounded-full" />
+            )}
+            <Icon className="w-5 h-5" strokeWidth={isActive ? 2.5 : 2} />
+            <span className={isActive ? "font-bold" : ""}>{label}</span>
+          </>
+        )}
       </NavLink>
     ))}
   </nav>
