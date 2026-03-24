@@ -1,13 +1,7 @@
-import { Search, ScanBarcode, Camera, FileText, LayoutGrid, ChevronLeft, Star, ShoppingCart } from "lucide-react";
+import { Search, ScanBarcode, Camera, FileText, LayoutGrid, ChevronLeft, Star, ShoppingCart, Bell } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
-import sparkPlug from "@/assets/spark-plug.png";
-import brakePads from "@/assets/brake-pads.png";
-import headlight from "@/assets/headlight.png";
-import controlArm from "@/assets/control-arm.png";
-import engineMount from "@/assets/engine-mount.png";
-import airFilter from "@/assets/air-filter.png";
-import shockAbsorbers from "@/assets/shock-absorbers.png";
+import { categories as allCategories, products } from "@/data/products";
 import oilFilter from "@/assets/oil-filter.png";
 
 const categories = [
