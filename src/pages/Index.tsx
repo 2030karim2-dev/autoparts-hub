@@ -4,19 +4,12 @@ import AppLayout from "@/components/AppLayout";
 import { categories as allCategories, products } from "@/data/products";
 import oilFilter from "@/assets/oil-filter.png";
 
-const categories = [
-  { name: "شمعات إشعال", image: sparkPlug },
-  { name: "فحمات فرامل", image: brakePads },
-  { name: "إضاءة", image: headlight },
-  { name: "ذراع تحكم", image: controlArm },
-  { name: "قاعدة محرك", image: engineMount },
-  { name: "فلتر هواء", image: airFilter },
-];
+const categories = allCategories.slice(0, 6);
 
-const recommended = [
-  { id: "shock-1", name: "ممتصات صدمات أمامية", compat: "توسان 2016-2020", oldPrice: 340, price: 220, discount: 35, image: shockAbsorbers },
-  { id: "filter-1", name: "فلتر هواء المقصورة", compat: "توسان 2016-2021", oldPrice: 79.30, price: 55.50, discount: 30, rating: 5, image: airFilter },
-];
+const recommended = products.filter((p) => ["shock-1", "filter-1"].includes(p.id)).map((p) => ({
+  ...p,
+  compat: p.compat[0] || "",
+}));
 
 const deals = [
   { id: "oil-1", name: "فلتر زيت", price: 24.75, oldPrice: 19.90, image: oilFilter },
