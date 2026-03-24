@@ -49,7 +49,7 @@ const Index = () => {
       </header>
 
       {/* Vehicle Selector */}
-      <div className="mx-4 -mt-3 bg-card rounded-xl p-3 shadow-md flex items-center justify-between animate-fade-in-up stagger-1" dir="rtl">
+      <div onClick={() => navigate("/vehicle-select")} className="mx-4 -mt-3 bg-card rounded-xl p-3 shadow-md flex items-center justify-between animate-fade-in-up stagger-1 cursor-pointer active:scale-[0.98] transition-transform" dir="rtl">
         <div className="flex items-center gap-3">
           <div className="w-12 h-8 bg-muted rounded flex items-center justify-center text-xs text-muted-foreground">🚗</div>
           <div>
