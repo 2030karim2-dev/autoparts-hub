@@ -28,7 +28,10 @@ const Index = () => {
             <span>SAR</span>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-sm font-medium">SAR</span>
+            <button onClick={() => navigate("/notifications")} className="relative active:scale-95 transition-transform">
+              <Bell className="w-5 h-5" />
+              <span className="absolute -top-1.5 -right-1.5 bg-destructive text-[9px] font-bold rounded-full w-3.5 h-3.5 flex items-center justify-center">2</span>
+            </button>
             <button onClick={() => navigate("/cart")} className="relative active:scale-95 transition-transform">
               <ShoppingCart className="w-5 h-5" />
               <span className="absolute -top-1.5 -right-1.5 bg-destructive text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">3</span>

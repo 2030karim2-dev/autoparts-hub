@@ -129,7 +129,10 @@ const Cart = () => {
 
           {/* CTA */}
           <div className="sticky bottom-[var(--bottom-nav-height)] bg-card border-t border-border px-4 py-3" dir="rtl">
-            <button className="w-full bg-primary text-primary-foreground font-bold text-sm py-3.5 rounded-xl transition-transform active:scale-[0.97] shadow-md">
+            <button
+              onClick={() => navigate("/checkout")}
+              className="w-full bg-primary text-primary-foreground font-bold text-sm py-3.5 rounded-xl transition-transform active:scale-[0.97] shadow-md"
+            >
               إتمام الطلب — SAR {total.toFixed(2)}
             </button>
           </div>
