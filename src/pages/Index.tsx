@@ -87,7 +87,7 @@ const Index = () => {
         </div>
         <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-1">
           {categories.map((cat) => (
-            <button key={cat.name} className="flex flex-col items-center gap-1.5 shrink-0 group">
+            <button key={cat.name} onClick={() => navigate(`/search?category=${encodeURIComponent(cat.name)}`)} className="flex flex-col items-center gap-1.5 shrink-0 group">
               <div className="w-14 h-14 rounded-full bg-card shadow-sm flex items-center justify-center overflow-hidden transition-all group-hover:shadow-md group-active:scale-95">
                 <img src={cat.image} alt={cat.name} className="w-9 h-9 object-contain" />
               </div>
