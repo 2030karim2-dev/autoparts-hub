@@ -63,12 +63,12 @@ const Index = () => {
       {/* Quick Actions */}
       <div className="flex justify-around px-4 py-4 animate-fade-in-up stagger-2" dir="rtl">
         {[
-          { icon: ScanBarcode, label: "مسح VIN" },
-          { icon: Camera, label: "بحث OCR" },
-          { icon: FileText, label: "طلب عرض سعر" },
-          { icon: LayoutGrid, label: "كل القطع" },
-        ].map(({ icon: Icon, label }) => (
-          <button key={label} className="flex flex-col items-center gap-1.5 group">
+          { icon: ScanBarcode, label: "مسح VIN", to: "/vehicle-select" },
+          { icon: Camera, label: "بحث OCR", to: "/search" },
+          { icon: FileText, label: "طلب عرض سعر", to: "/quote-request" },
+          { icon: LayoutGrid, label: "كل القطع", to: "/search" },
+        ].map(({ icon: Icon, label, to }) => (
+          <button key={label} onClick={() => navigate(to)} className="flex flex-col items-center gap-1.5 group">
             <div className="w-12 h-12 rounded-xl bg-card shadow-sm flex items-center justify-center text-primary transition-all group-hover:shadow-md group-active:scale-95">
               <Icon className="w-5 h-5" />
             </div>
