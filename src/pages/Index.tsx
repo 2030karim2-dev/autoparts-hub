@@ -1,28 +1,15 @@
-import { Search, ScanBarcode, Camera, FileText, LayoutGrid, ChevronLeft, Star, ShoppingCart } from "lucide-react";
+import { Search, ScanBarcode, Camera, FileText, LayoutGrid, ChevronLeft, Star, ShoppingCart, Bell } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
-import sparkPlug from "@/assets/spark-plug.png";
-import brakePads from "@/assets/brake-pads.png";
-import headlight from "@/assets/headlight.png";
-import controlArm from "@/assets/control-arm.png";
-import engineMount from "@/assets/engine-mount.png";
-import airFilter from "@/assets/air-filter.png";
-import shockAbsorbers from "@/assets/shock-absorbers.png";
+import { categories as allCategories, products } from "@/data/products";
 import oilFilter from "@/assets/oil-filter.png";
 
-const categories = [
-  { name: "شمعات إشعال", image: sparkPlug },
-  { name: "فحمات فرامل", image: brakePads },
-  { name: "إضاءة", image: headlight },
-  { name: "ذراع تحكم", image: controlArm },
-  { name: "قاعدة محرك", image: engineMount },
-  { name: "فلتر هواء", image: airFilter },
-];
+const categories = allCategories.slice(0, 6);
 
-const recommended = [
-  { id: "shock-1", name: "ممتصات صدمات أمامية", compat: "توسان 2016-2020", oldPrice: 340, price: 220, discount: 35, image: shockAbsorbers },
-  { id: "filter-1", name: "فلتر هواء المقصورة", compat: "توسان 2016-2021", oldPrice: 79.30, price: 55.50, discount: 30, rating: 5, image: airFilter },
-];
+const recommended = products.filter((p) => ["shock-1", "filter-1"].includes(p.id)).map((p) => ({
+  ...p,
+  compat: p.compat[0] || "",
+}));
 
 const deals = [
   { id: "oil-1", name: "فلتر زيت", price: 24.75, oldPrice: 19.90, image: oilFilter },
@@ -41,7 +28,10 @@ const Index = () => {
             <span>SAR</span>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-sm font-medium">SAR</span>
+            <button onClick={() => navigate("/notifications")} className="relative active:scale-95 transition-transform">
+              <Bell className="w-5 h-5" />
+              <span className="absolute -top-1.5 -right-1.5 bg-destructive text-[9px] font-bold rounded-full w-3.5 h-3.5 flex items-center justify-center">2</span>
+            </button>
             <button onClick={() => navigate("/cart")} className="relative active:scale-95 transition-transform">
               <ShoppingCart className="w-5 h-5" />
               <span className="absolute -top-1.5 -right-1.5 bg-destructive text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">3</span>
@@ -49,13 +39,11 @@ const Index = () => {
           </div>
         </div>
         <div className="flex gap-2">
-          <div className="flex-1 relative">
+          <div className="flex-1 relative" onClick={() => navigate("/search")}>
             <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <input
-              className="w-full h-10 rounded-lg bg-card text-card-foreground pr-9 pl-3 text-sm placeholder:text-muted-foreground outline-none"
-              placeholder="ادخل اسم القطعة او OEM / SKU"
-              dir="rtl"
-            />
+            <div className="w-full h-10 rounded-lg bg-card text-muted-foreground pr-9 pl-3 text-sm flex items-center cursor-pointer" dir="rtl">
+              ادخل اسم القطعة او OEM / SKU
+            </div>
           </div>
           <button className="w-10 h-10 rounded-lg bg-primary-foreground/20 flex items-center justify-center shrink-0 active:scale-95 transition-transform">
             <Camera className="w-5 h-5" />
@@ -64,7 +52,7 @@ const Index = () => {
       </header>
 
       {/* Vehicle Selector */}
-      <div className="mx-4 -mt-3 bg-card rounded-xl p-3 shadow-md flex items-center justify-between animate-fade-in-up stagger-1" dir="rtl">
+      <div onClick={() => navigate("/vehicle-select")} className="mx-4 -mt-3 bg-card rounded-xl p-3 shadow-md flex items-center justify-between animate-fade-in-up stagger-1 cursor-pointer active:scale-[0.98] transition-transform" dir="rtl">
         <div className="flex items-center gap-3">
           <div className="w-12 h-8 bg-muted rounded flex items-center justify-center text-xs text-muted-foreground">🚗</div>
           <div>
@@ -78,12 +66,12 @@ const Index = () => {
       {/* Quick Actions */}
       <div className="flex justify-around px-4 py-4 animate-fade-in-up stagger-2" dir="rtl">
         {[
-          { icon: ScanBarcode, label: "مسح VIN" },
-          { icon: Camera, label: "بحث OCR" },
-          { icon: FileText, label: "طلب عرض سعر" },
-          { icon: LayoutGrid, label: "كل القطع" },
-        ].map(({ icon: Icon, label }) => (
-          <button key={label} className="flex flex-col items-center gap-1.5 group">
+          { icon: ScanBarcode, label: "مسح VIN", to: "/vehicle-select" },
+          { icon: Camera, label: "بحث OCR", to: "/search" },
+          { icon: FileText, label: "طلب عرض سعر", to: "/quote-request" },
+          { icon: LayoutGrid, label: "كل القطع", to: "/search" },
+        ].map(({ icon: Icon, label, to }) => (
+          <button key={label} onClick={() => navigate(to)} className="flex flex-col items-center gap-1.5 group">
             <div className="w-12 h-12 rounded-xl bg-card shadow-sm flex items-center justify-center text-primary transition-all group-hover:shadow-md group-active:scale-95">
               <Icon className="w-5 h-5" />
             </div>
@@ -102,7 +90,7 @@ const Index = () => {
         </div>
         <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-1">
           {categories.map((cat) => (
-            <button key={cat.name} className="flex flex-col items-center gap-1.5 shrink-0 group">
+            <button key={cat.name} onClick={() => navigate(`/search?category=${encodeURIComponent(cat.name)}`)} className="flex flex-col items-center gap-1.5 shrink-0 group">
               <div className="w-14 h-14 rounded-full bg-card shadow-sm flex items-center justify-center overflow-hidden transition-all group-hover:shadow-md group-active:scale-95">
                 <img src={cat.image} alt={cat.name} className="w-9 h-9 object-contain" />
               </div>
