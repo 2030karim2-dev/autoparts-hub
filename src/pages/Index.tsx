@@ -36,13 +36,11 @@ const Index = () => {
           </div>
         </div>
         <div className="flex gap-2">
-          <div className="flex-1 relative">
+          <div className="flex-1 relative" onClick={() => navigate("/search")}>
             <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <input
-              className="w-full h-10 rounded-lg bg-card text-card-foreground pr-9 pl-3 text-sm placeholder:text-muted-foreground outline-none"
-              placeholder="ادخل اسم القطعة او OEM / SKU"
-              dir="rtl"
-            />
+            <div className="w-full h-10 rounded-lg bg-card text-muted-foreground pr-9 pl-3 text-sm flex items-center cursor-pointer" dir="rtl">
+              ادخل اسم القطعة او OEM / SKU
+            </div>
           </div>
           <button className="w-10 h-10 rounded-lg bg-primary-foreground/20 flex items-center justify-center shrink-0 active:scale-95 transition-transform">
             <Camera className="w-5 h-5" />
