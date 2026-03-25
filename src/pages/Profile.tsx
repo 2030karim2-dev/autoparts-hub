@@ -1,4 +1,4 @@
-import { ArrowRight, User, Settings, MapPin, CreditCard, Bell, LogOut, Heart, Package, Star, ChevronLeft, Gift } from "lucide-react";
+import { ArrowRight, User, Settings, MapPin, CreditCard, Bell, LogOut, Heart, Package, Star, ChevronLeft, Gift, Moon, Sun, Info } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
 
@@ -24,12 +24,18 @@ const menuSections = [
     title: "عام",
     items: [
       { icon: Settings, label: "الإعدادات", to: "#" },
+      { icon: Info, label: "عن التطبيق", to: "/about" },
     ],
   },
 ];
 
 const Profile = () => {
   const navigate = useNavigate();
+
+  const toggleDarkMode = () => {
+    document.documentElement.classList.toggle("dark");
+  };
+
   return (
     <AppLayout>
       <header className="bg-primary text-primary-foreground px-4 flex items-center justify-between h-[var(--nav-height)] sticky top-0 z-10">
@@ -41,7 +47,6 @@ const Profile = () => {
         </button>
       </header>
 
-      {/* Profile Card */}
       <div className="px-4 py-5" dir="rtl">
         <div className="bg-card rounded-xl p-4 shadow-sm flex items-center gap-4 animate-fade-in-up stagger-1">
           <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
@@ -59,7 +64,6 @@ const Profile = () => {
         </div>
       </div>
 
-      {/* Stats */}
       <div className="px-4 mb-4" dir="rtl">
         <div className="grid grid-cols-3 gap-2 animate-fade-in-up stagger-2">
           {[
@@ -75,7 +79,18 @@ const Profile = () => {
         </div>
       </div>
 
-      {/* Menu Sections */}
+      {/* Dark Mode Toggle */}
+      <div className="px-4 mb-4" dir="rtl">
+        <button onClick={toggleDarkMode} className="w-full bg-card rounded-xl px-4 py-3.5 flex items-center gap-3 shadow-sm active:scale-[0.98] transition-transform animate-fade-in-up stagger-3">
+          <Moon className="w-5 h-5 text-primary dark:hidden" />
+          <Sun className="w-5 h-5 text-warning hidden dark:block" />
+          <span className="text-sm font-medium flex-1 text-right">الوضع الداكن</span>
+          <div className="w-10 h-6 bg-muted dark:bg-primary rounded-full relative transition-colors">
+            <div className="absolute top-0.5 left-0.5 dark:left-auto dark:right-0.5 w-5 h-5 bg-card rounded-full shadow transition-all" />
+          </div>
+        </button>
+      </div>
+
       <div className="px-4 space-y-4 pb-6" dir="rtl">
         {menuSections.map((section, si) => (
           <div key={section.title} className={`animate-fade-in-up stagger-${Math.min(si + 3, 5)}`}>
@@ -91,9 +106,7 @@ const Profile = () => {
                 >
                   <Icon className="w-5 h-5 text-primary shrink-0" />
                   <span className="text-sm font-medium flex-1 text-right">{label}</span>
-                  {badge && (
-                    <span className="text-[10px] font-bold bg-primary text-primary-foreground px-1.5 py-0.5 rounded-full">{badge}</span>
-                  )}
+                  {badge && <span className="text-[10px] font-bold bg-primary text-primary-foreground px-1.5 py-0.5 rounded-full">{badge}</span>}
                   <ChevronLeft className="w-4 h-4 text-muted-foreground" />
                 </button>
               ))}
@@ -101,11 +114,7 @@ const Profile = () => {
           </div>
         ))}
 
-        {/* Logout */}
-        <button
-          onClick={() => navigate("/auth")}
-          className="w-full bg-destructive/10 rounded-xl px-4 py-3.5 flex items-center gap-3 active:scale-[0.98] transition-transform animate-fade-in-up stagger-5"
-        >
+        <button onClick={() => navigate("/auth")} className="w-full bg-destructive/10 rounded-xl px-4 py-3.5 flex items-center gap-3 active:scale-[0.98] transition-transform animate-fade-in-up stagger-5">
           <LogOut className="w-5 h-5 text-destructive" />
           <span className="text-sm font-medium text-destructive">تسجيل الخروج</span>
         </button>

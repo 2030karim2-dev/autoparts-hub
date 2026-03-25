@@ -1,14 +1,17 @@
-import { Search, ScanBarcode, Camera, FileText, LayoutGrid, ChevronLeft, Star, ShoppingCart, Bell } from "lucide-react";
+import { Search, ScanBarcode, Camera, FileText, LayoutGrid, ChevronLeft, Star, ShoppingCart, Bell, GitCompare } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
 import { categories as allCategories, products } from "@/data/products";
+import { useCart } from "@/contexts/CartContext";
+import { useCompare } from "@/contexts/CompareContext";
+import { toast } from "sonner";
 import oilFilter from "@/assets/oil-filter.png";
 
 const categories = allCategories.slice(0, 6);
 
 const recommended = products.filter((p) => ["shock-1", "filter-1"].includes(p.id)).map((p) => ({
   ...p,
-  compat: p.compat[0] || "",
+  compatText: p.compat[0] || "",
 }));
 
 const deals = [
@@ -17,10 +20,11 @@ const deals = [
 
 const Index = () => {
   const navigate = useNavigate();
+  const { addItem, totalItems } = useCart();
+  const { items: compareItems } = useCompare();
 
   return (
     <AppLayout>
-      {/* Header */}
       <header className="bg-primary text-primary-foreground px-4 pt-3 pb-5 rounded-b-2xl animate-fade-in">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2 text-sm font-medium">
@@ -28,13 +32,21 @@ const Index = () => {
             <span>SAR</span>
           </div>
           <div className="flex items-center gap-3">
+            {compareItems.length > 0 && (
+              <button onClick={() => navigate("/compare")} className="relative active:scale-95 transition-transform">
+                <GitCompare className="w-5 h-5" />
+                <span className="absolute -top-1.5 -right-1.5 bg-warning text-[9px] font-bold rounded-full w-3.5 h-3.5 flex items-center justify-center text-warning-foreground">{compareItems.length}</span>
+              </button>
+            )}
             <button onClick={() => navigate("/notifications")} className="relative active:scale-95 transition-transform">
               <Bell className="w-5 h-5" />
               <span className="absolute -top-1.5 -right-1.5 bg-destructive text-[9px] font-bold rounded-full w-3.5 h-3.5 flex items-center justify-center">2</span>
             </button>
             <button onClick={() => navigate("/cart")} className="relative active:scale-95 transition-transform">
               <ShoppingCart className="w-5 h-5" />
-              <span className="absolute -top-1.5 -right-1.5 bg-destructive text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">3</span>
+              {totalItems > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 bg-destructive text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">{totalItems}</span>
+              )}
             </button>
           </div>
         </div>
@@ -51,7 +63,6 @@ const Index = () => {
         </div>
       </header>
 
-      {/* Vehicle Selector */}
       <div onClick={() => navigate("/vehicle-select")} className="mx-4 -mt-3 bg-card rounded-xl p-3 shadow-md flex items-center justify-between animate-fade-in-up stagger-1 cursor-pointer active:scale-[0.98] transition-transform" dir="rtl">
         <div className="flex items-center gap-3">
           <div className="w-12 h-8 bg-muted rounded flex items-center justify-center text-xs text-muted-foreground">🚗</div>
@@ -63,7 +74,6 @@ const Index = () => {
         <ChevronLeft className="w-4 h-4 text-muted-foreground" />
       </div>
 
-      {/* Quick Actions */}
       <div className="flex justify-around px-4 py-4 animate-fade-in-up stagger-2" dir="rtl">
         {[
           { icon: ScanBarcode, label: "مسح VIN", to: "/vehicle-select" },
@@ -80,7 +90,6 @@ const Index = () => {
         ))}
       </div>
 
-      {/* Categories */}
       <section className="px-4 mb-4 animate-fade-in-up stagger-3" dir="rtl">
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-base font-bold">الأقسام</h2>
@@ -100,24 +109,19 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Recommended */}
       <section className="px-4 mb-4 animate-fade-in-up stagger-4" dir="rtl">
         <h2 className="text-base font-bold mb-3">موصى بها لتوسان الخاصة بك</h2>
         <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-1">
           {recommended.map((item) => (
-            <div
-              key={item.name}
-              onClick={() => navigate(`/product/${item.id}`)}
-              className="bg-card rounded-xl shadow-sm p-3 min-w-[170px] shrink-0 cursor-pointer active:scale-[0.97] transition-transform"
-            >
+            <div key={item.name} onClick={() => navigate(`/product/${item.id}`)} className="bg-card rounded-xl shadow-sm p-3 min-w-[170px] shrink-0 cursor-pointer active:scale-[0.97] transition-transform">
               <div className="w-full h-24 bg-secondary rounded-lg flex items-center justify-center mb-2">
                 <img src={item.image} alt={item.name} className="h-20 object-contain" />
               </div>
               <h3 className="text-sm font-semibold mb-0.5 leading-tight">{item.name}</h3>
-              <p className="text-xs text-primary mb-1">{item.compat}</p>
+              <p className="text-xs text-primary mb-1">{item.compatText}</p>
               {item.rating && (
                 <div className="flex items-center gap-0.5 mb-1">
-                  {Array.from({ length: item.rating }).map((_, i) => (
+                  {Array.from({ length: Math.floor(item.rating) }).map((_, i) => (
                     <Star key={i} className="w-3 h-3 fill-warning text-warning" />
                   ))}
                 </div>
@@ -129,7 +133,7 @@ const Index = () => {
               <div className="flex items-center justify-between">
                 <span className="text-base font-bold">SAR {item.price}</span>
                 <button
-                  onClick={(e) => { e.stopPropagation(); }}
+                  onClick={(e) => { e.stopPropagation(); addItem(item); toast.success("تمت الإضافة للسلة"); }}
                   className="bg-primary text-primary-foreground text-[10px] font-semibold px-2.5 py-1.5 rounded-lg transition-transform active:scale-95"
                 >
                   أضف للسلة
@@ -140,16 +144,11 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Best Deals */}
       <section className="px-4 mb-6 animate-fade-in-up stagger-5" dir="rtl">
         <h2 className="text-base font-bold mb-3">أفضل العروض</h2>
         <div className="flex gap-3">
           {deals.map((item) => (
-            <div
-              key={item.name}
-              onClick={() => navigate(`/product/${item.id}`)}
-              className="bg-card rounded-xl shadow-sm p-3 flex-1 cursor-pointer active:scale-[0.97] transition-transform"
-            >
+            <div key={item.name} onClick={() => navigate(`/product/${item.id}`)} className="bg-card rounded-xl shadow-sm p-3 flex-1 cursor-pointer active:scale-[0.97] transition-transform">
               <div className="w-full h-20 bg-secondary rounded-lg flex items-center justify-center mb-2">
                 <img src={item.image} alt={item.name} className="h-16 object-contain" />
               </div>
