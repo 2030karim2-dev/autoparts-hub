@@ -1,11 +1,13 @@
 import { useState } from "react";
-import { ArrowRight, Heart, ShoppingCart, Star, Check, Minus, Plus, ChevronLeft, Share2 } from "lucide-react";
+import { ArrowRight, Heart, ShoppingCart, Star, Check, Minus, Plus, ChevronLeft } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
 import { products } from "@/data/products";
 import { useCart } from "@/contexts/CartContext";
 import { useCompare } from "@/contexts/CompareContext";
 import { toast } from "sonner";
+import ShareButton from "@/components/ShareButton";
+import ProductSuggestions from "@/components/ProductSuggestions";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -33,10 +35,13 @@ const ProductDetail = () => {
   };
 
   const reviews = [
-    { name: "أحمد", rating: 5, text: "قطعة ممتازة وتركيب سهل", time: "منذ أسبوع" },
-    { name: "محمد", rating: 4, text: "جودة عالية والتوصيل سريع", time: "منذ شهر" },
-    { name: "خالد", rating: 5, text: "مطابقة للأصلي تماماً", time: "منذ شهرين" },
+    { name: "أحمد", rating: 5, text: "قطعة ممتازة وتركيب سهل، أنصح بها بشدة", time: "منذ أسبوع" },
+    { name: "محمد", rating: 4, text: "جودة عالية والتوصيل سريع من صنعاء", time: "منذ شهر" },
+    { name: "خالد", rating: 5, text: "مطابقة للأصلي تماماً، ممتاز", time: "منذ شهرين" },
+    { name: "عبدالله", rating: 4, text: "منتج جيد والسعر مناسب", time: "منذ 3 أشهر" },
   ];
+
+  const avgRating = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
 
   return (
     <AppLayout>
@@ -45,7 +50,11 @@ const ProductDetail = () => {
           <ArrowRight className="w-5 h-5" />
         </button>
         <p className="text-sm text-muted-foreground" dir="rtl">قطع غيار &gt; {product.category}</p>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          <ShareButton
+            title={product.name}
+            text={`${product.name} - SAR ${product.price} | OEM: ${product.oem}`}
+          />
           <button onClick={() => setIsFavorite(!isFavorite)} className="active:scale-95 transition-transform">
             <Heart className={`w-5 h-5 ${isFavorite ? "fill-destructive text-destructive" : "text-muted-foreground"}`} />
           </button>
@@ -138,7 +147,7 @@ const ProductDetail = () => {
         <div className="py-4 space-y-2.5">
           {activeTab === "details" && (
             <>
-              {["ذراع تحكم عالي الجودة", "مصنوع من مواد متينة", "مُجمّع مسبقاً وجاهز للتركيب"].map((txt) => (
+              {["ذراع تحكم عالي الجودة", "مصنوع من مواد متينة", "مُجمّع مسبقاً وجاهز للتركيب", "ضمان سنة كاملة"].map((txt) => (
                 <div key={txt} className="flex items-start gap-2">
                   <Check className="w-4 h-4 text-success shrink-0 mt-0.5" />
                   <p className="text-sm text-foreground">{txt}</p>
@@ -158,13 +167,42 @@ const ProductDetail = () => {
           )}
           {activeTab === "reviews" && (
             <div className="space-y-3">
+              {/* Rating Summary */}
+              <div className="bg-card rounded-xl p-4 border border-border flex items-center gap-4">
+                <div className="text-center">
+                  <p className="text-3xl font-black text-primary">{avgRating.toFixed(1)}</p>
+                  <div className="flex gap-0.5 justify-center mt-1">
+                    {[1, 2, 3, 4, 5].map((s) => (
+                      <Star key={s} className={`w-3 h-3 ${s <= Math.round(avgRating) ? "fill-warning text-warning" : "text-muted"}`} />
+                    ))}
+                  </div>
+                  <p className="text-[10px] text-muted-foreground mt-1">{reviews.length} تقييم</p>
+                </div>
+                <div className="flex-1 space-y-1">
+                  {[5, 4, 3, 2, 1].map((star) => {
+                    const count = reviews.filter((r) => r.rating === star).length;
+                    const pct = (count / reviews.length) * 100;
+                    return (
+                      <div key={star} className="flex items-center gap-1.5">
+                        <span className="text-[10px] text-muted-foreground w-3">{star}</span>
+                        <Star className="w-2.5 h-2.5 fill-warning text-warning" />
+                        <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden">
+                          <div className="h-full bg-warning rounded-full" style={{ width: `${pct}%` }} />
+                        </div>
+                        <span className="text-[10px] text-muted-foreground w-4">{count}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
               {/* Add Review */}
               <div className="bg-card rounded-xl p-3 border border-border">
                 <p className="text-xs font-bold mb-2">أضف تقييمك</p>
                 <div className="flex gap-1 mb-2">
                   {[1, 2, 3, 4, 5].map((s) => (
                     <button key={s} onClick={() => setUserRating(s)}>
-                      <Star className={`w-5 h-5 ${s <= userRating ? "fill-warning text-warning" : "text-muted"}`} />
+                      <Star className={`w-6 h-6 transition-transform active:scale-125 ${s <= userRating ? "fill-warning text-warning" : "text-muted"}`} />
                     </button>
                   ))}
                 </div>
@@ -176,24 +214,31 @@ const ProductDetail = () => {
                 />
                 <button
                   onClick={() => { setUserRating(0); setReviewText(""); toast.success("تم إرسال التقييم"); }}
-                  className="bg-primary text-primary-foreground text-xs font-bold px-4 py-2 rounded-lg active:scale-95"
+                  disabled={userRating === 0}
+                  className="bg-primary text-primary-foreground text-xs font-bold px-4 py-2 rounded-lg active:scale-95 disabled:opacity-50"
                 >
-                  إرسال
+                  إرسال التقييم
                 </button>
               </div>
-              {/* Existing Reviews */}
-              {reviews.map((r) => (
-                <div key={r.name} className="bg-card rounded-xl p-3 shadow-sm">
+
+              {/* Reviews List */}
+              {reviews.map((r, i) => (
+                <div key={i} className="bg-card rounded-xl p-3 shadow-sm">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm font-bold">{r.name}</span>
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center">
+                        <span className="text-xs font-bold text-primary">{r.name[0]}</span>
+                      </div>
+                      <span className="text-sm font-bold">{r.name}</span>
+                    </div>
                     <span className="text-[10px] text-muted-foreground">{r.time}</span>
                   </div>
-                  <div className="flex gap-0.5 mb-1">
+                  <div className="flex gap-0.5 mb-1 mr-9">
                     {[1, 2, 3, 4, 5].map((s) => (
                       <Star key={s} className={`w-3 h-3 ${s <= r.rating ? "fill-warning text-warning" : "text-muted"}`} />
                     ))}
                   </div>
-                  <p className="text-sm text-muted-foreground">{r.text}</p>
+                  <p className="text-sm text-muted-foreground mr-9">{r.text}</p>
                 </div>
               ))}
             </div>
@@ -201,9 +246,12 @@ const ProductDetail = () => {
         </div>
       </div>
 
+      {/* Suggestions */}
+      <ProductSuggestions currentProductId={product.id} />
+
       <div className="sticky bottom-[var(--bottom-nav-height)] bg-card border-t border-border px-4 py-3 flex gap-3" dir="rtl">
         <button onClick={handleAddToCart} disabled={!product.inStock} className="flex-1 bg-primary text-primary-foreground font-bold text-sm py-3 rounded-xl transition-transform active:scale-[0.97] shadow-md disabled:opacity-50">
-          أضف للسلة
+          أضف للسلة — SAR {(product.price * qty).toFixed(2)}
         </button>
         <button onClick={() => navigate("/quote-request")} className="flex-1 border-2 border-primary text-primary font-bold text-sm py-3 rounded-xl transition-transform active:scale-[0.97]">
           طلب عرض سعر

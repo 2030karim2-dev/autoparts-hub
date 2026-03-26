@@ -25,6 +25,8 @@ import QuoteRequest from "./pages/QuoteRequest.tsx";
 import Compare from "./pages/Compare.tsx";
 import About from "./pages/About.tsx";
 import Onboarding from "./pages/Onboarding.tsx";
+import Settings from "./pages/Settings.tsx";
+import Deals from "./pages/Deals.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -58,6 +60,8 @@ const App = () => (
               <Route path="/compare" element={<Compare />} />
               <Route path="/about" element={<About />} />
               <Route path="/onboarding" element={<Onboarding />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/deals" element={<Deals />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

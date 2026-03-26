@@ -1,4 +1,4 @@
-import { ArrowRight, User, Settings, MapPin, CreditCard, Bell, LogOut, Heart, Package, Star, ChevronLeft, Gift, Moon, Sun, Info } from "lucide-react";
+import { ArrowRight, User, MapPin, CreditCard, Bell, LogOut, Heart, Package, Star, ChevronLeft, Gift, Moon, Sun, Info, Settings, Flame } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
 
@@ -9,6 +9,7 @@ const menuSections = [
       { icon: Package, label: "طلباتي", to: "/orders", badge: "3" },
       { icon: Heart, label: "المفضلة", to: "/wishlist", badge: "4" },
       { icon: Star, label: "تقييماتي", to: "#" },
+      { icon: Flame, label: "العروض", to: "/deals" },
     ],
   },
   {
@@ -23,7 +24,7 @@ const menuSections = [
   {
     title: "عام",
     items: [
-      { icon: Settings, label: "الإعدادات", to: "#" },
+      { icon: Settings, label: "الإعدادات", to: "/settings" },
       { icon: Info, label: "عن التطبيق", to: "/about" },
     ],
   },
