@@ -3,6 +3,7 @@ import { ArrowRight, Minus, Plus, Trash2, ShoppingBag, Tag, X } from "lucide-rea
 import { useNavigate } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
 import { useCart } from "@/contexts/CartContext";
+import ProductSuggestions from "@/components/ProductSuggestions";
 
 const Cart = () => {
   const navigate = useNavigate();
@@ -28,9 +29,7 @@ const Cart = () => {
   return (
     <AppLayout>
       <header className="bg-primary text-primary-foreground px-4 flex items-center justify-between h-[var(--nav-height)] sticky top-0 z-10">
-        <button onClick={() => navigate(-1)} className="active:scale-95 transition-transform">
-          <ArrowRight className="w-5 h-5" />
-        </button>
+        <button onClick={() => navigate(-1)} className="active:scale-95 transition-transform"><ArrowRight className="w-5 h-5" /></button>
         <h1 className="text-base font-bold">سلة المشتريات</h1>
         <span className="text-xs font-medium bg-primary-foreground/20 px-2 py-0.5 rounded-full">{totalItems} منتجات</span>
       </header>
@@ -64,13 +63,9 @@ const Cart = () => {
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
                       <div className="flex items-center border border-border rounded-lg overflow-hidden">
-                        <button onClick={() => updateQty(item.product.id, item.qty - 1)} className="w-7 h-7 flex items-center justify-center active:bg-muted">
-                          <Minus className="w-3 h-3" />
-                        </button>
+                        <button onClick={() => updateQty(item.product.id, item.qty - 1)} className="w-7 h-7 flex items-center justify-center active:bg-muted"><Minus className="w-3 h-3" /></button>
                         <span className="w-6 text-center text-xs font-bold">{item.qty}</span>
-                        <button onClick={() => updateQty(item.product.id, item.qty + 1)} className="w-7 h-7 flex items-center justify-center active:bg-muted">
-                          <Plus className="w-3 h-3" />
-                        </button>
+                        <button onClick={() => updateQty(item.product.id, item.qty + 1)} className="w-7 h-7 flex items-center justify-center active:bg-muted"><Plus className="w-3 h-3" /></button>
                       </div>
                     </div>
                   </div>
@@ -78,6 +73,9 @@ const Cart = () => {
               </div>
             ))}
           </div>
+
+          {/* Suggestions */}
+          <ProductSuggestions title="قد يعجبك أيضاً" maxItems={4} currentProductId={items[0]?.product.id} />
 
           {/* Coupon */}
           <div className="px-4 py-2" dir="rtl">
@@ -133,7 +131,6 @@ const Cart = () => {
             </div>
           </div>
 
-          {/* CTA */}
           <div className="sticky bottom-[var(--bottom-nav-height)] bg-card border-t border-border px-4 py-3" dir="rtl">
             <button onClick={() => navigate("/checkout")} className="w-full bg-primary text-primary-foreground font-bold text-sm py-3.5 rounded-xl transition-transform active:scale-[0.97] shadow-md">
               إتمام الطلب — SAR {total.toFixed(2)}
