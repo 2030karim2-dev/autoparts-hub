@@ -145,7 +145,12 @@ const Index = () => {
       </section>
 
       <section className="px-4 mb-6 animate-fade-in-up stagger-5" dir="rtl">
-        <h2 className="text-base font-bold mb-3">أفضل العروض</h2>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-base font-bold">أفضل العروض</h2>
+          <button className="text-xs text-primary font-medium flex items-center gap-0.5" onClick={() => navigate("/deals")}>
+            عرض الكل <ChevronLeft className="w-3 h-3" />
+          </button>
+        </div>
         <div className="flex gap-3">
           {deals.map((item) => (
             <div key={item.name} onClick={() => navigate(`/product/${item.id}`)} className="bg-card rounded-xl shadow-sm p-3 flex-1 cursor-pointer active:scale-[0.97] transition-transform">
@@ -156,10 +161,10 @@ const Index = () => {
               <p className="text-xs text-muted-foreground line-through">SAR {item.oldPrice}</p>
             </div>
           ))}
-          <div className="bg-gradient-to-br from-warning/20 to-warning/5 rounded-xl p-3 flex-1 flex flex-col items-center justify-center text-center">
-            <p className="text-sm font-bold mb-1">سجل الآن واحصل</p>
-            <p className="text-2xl font-black text-primary">3000</p>
-            <p className="text-xs font-semibold text-primary">نقطة مكافأة</p>
+          <div onClick={() => navigate("/deals")} className="bg-gradient-to-br from-warning/20 to-warning/5 rounded-xl p-3 flex-1 flex flex-col items-center justify-center text-center cursor-pointer active:scale-[0.97] transition-transform">
+            <p className="text-sm font-bold mb-1">عروض حصرية</p>
+            <p className="text-2xl font-black text-primary">25%</p>
+            <p className="text-xs font-semibold text-primary">خصم إضافي</p>
           </div>
         </div>
       </section>
