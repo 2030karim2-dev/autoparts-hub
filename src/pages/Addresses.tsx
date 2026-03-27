@@ -130,7 +130,16 @@ const Addresses = () => {
               </div>
             </div>
             <p className="text-sm text-foreground mb-0.5">{addr.city}، {addr.detail}</p>
-            <p className="text-xs text-muted-foreground mb-2">📞 +967 {addr.phone}</p>
+            <p className="text-xs text-muted-foreground mb-1">📞 +967 {addr.phone}</p>
+            {(() => {
+              const z = deliveryZones.find((dz) => dz.city === addr.city);
+              return z ? (
+                <div className="flex items-center gap-2 mb-2 bg-primary/5 rounded-lg px-2 py-1.5">
+                  <Truck className="w-3.5 h-3.5 text-primary shrink-0" />
+                  <span className="text-[10px] text-muted-foreground">التوصيل: {z.estimatedDays} أيام • الرسوم: {format(z.fee)} • مجاني فوق {format(z.freeAbove)}</span>
+                </div>
+              ) : null;
+            })()}
             {!addr.isDefault && (
               <button
                 onClick={() => setDefault(addr.id)}
