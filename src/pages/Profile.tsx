@@ -1,4 +1,4 @@
-import { ArrowRight, User, MapPin, CreditCard, Bell, LogOut, Heart, Package, Star, ChevronLeft, Gift, Moon, Sun, Info, Settings, Flame } from "lucide-react";
+import { ArrowRight, User, MapPin, CreditCard, Bell, LogOut, Heart, Package, Star, ChevronLeft, Gift, Moon, Sun, Info, Settings, Flame, RotateCcw, Shield, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
 
@@ -10,14 +10,16 @@ const menuSections = [
       { icon: Heart, label: "المفضلة", to: "/wishlist", badge: "4" },
       { icon: Star, label: "تقييماتي", to: "#" },
       { icon: Flame, label: "العروض", to: "/deals" },
+      { icon: RotateCcw, label: "طلبات الإرجاع", to: "/return-request" },
     ],
   },
   {
     title: "حسابي",
     items: [
       { icon: User, label: "معلوماتي الشخصية", to: "#" },
+      { icon: Users, label: "نوع الحساب", to: "/customer-registration" },
       { icon: MapPin, label: "عناوين التوصيل", to: "/addresses" },
-      { icon: CreditCard, label: "طرق الدفع", to: "#" },
+      { icon: CreditCard, label: "طرق الدفع", to: "/payment-methods" },
       { icon: Bell, label: "الإشعارات", to: "/notifications" },
     ],
   },
@@ -25,6 +27,7 @@ const menuSections = [
     title: "عام",
     items: [
       { icon: Settings, label: "الإعدادات", to: "/settings" },
+      { icon: Shield, label: "الشروط والأحكام", to: "/terms" },
       { icon: Info, label: "عن التطبيق", to: "/about" },
     ],
   },

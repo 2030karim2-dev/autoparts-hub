@@ -1,7 +1,9 @@
 import { useState } from "react";
-import { ArrowRight, Plus, MapPin, Edit2, Trash2, Check } from "lucide-react";
+import { ArrowRight, Plus, MapPin, Edit2, Trash2, Check, Truck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
+import { deliveryZones } from "@/data/yemenData";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 interface Address {
   id: string;
@@ -17,7 +19,7 @@ const initialAddresses: Address[] = [
   { id: "2", name: "العمل", city: "صنعاء", detail: "شارع حدة، برج التجارة، الطابق 5", phone: "771234568", isDefault: false },
 ];
 
-const yemenCities = ["صنعاء", "عدن", "تعز", "إب", "الحديدة", "ذمار", "حجة", "المكلا", "سيئون", "مأرب", "عمران", "صعدة", "البيضاء", "لحج", "أبين"];
+const yemenCities = deliveryZones.map((z) => z.city);
 
 const Addresses = () => {
   const navigate = useNavigate();
