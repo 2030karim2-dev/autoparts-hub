@@ -23,6 +23,7 @@ const yemenCities = deliveryZones.map((z) => z.city);
 
 const Addresses = () => {
   const navigate = useNavigate();
+  const { format } = useCurrency();
   const [addresses, setAddresses] = useState(initialAddresses);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ name: "", city: "صنعاء", detail: "", phone: "" });
