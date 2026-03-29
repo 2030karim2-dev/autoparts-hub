@@ -1,7 +1,7 @@
 import { ArrowRight, Moon, Sun, Bell, Globe, Shield, Trash2, ChevronLeft } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import AppLayout from "@/components/AppLayout";
+import AppLayout from "@/components/layout/AppLayout";
 
 const Settings = () => {
   const navigate = useNavigate();

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ArrowRight, Heart, ShoppingCart, Trash2, Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import AppLayout from "@/components/AppLayout";
+import AppLayout from "@/components/layout/AppLayout";
 import { products } from "@/data/products";
 import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";

@@ -1,6 +1,6 @@
 import { ArrowRight, X, Star, Check, AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import AppLayout from "@/components/AppLayout";
+import AppLayout from "@/components/layout/AppLayout";
 import { useCompare } from "@/contexts/CompareContext";
 import { useCart } from "@/contexts/CartContext";
 

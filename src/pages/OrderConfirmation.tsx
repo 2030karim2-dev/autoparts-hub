@@ -1,6 +1,6 @@
 import { CheckCircle, Package, ArrowRight, Copy } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import AppLayout from "@/components/AppLayout";
+import AppLayout from "@/components/layout/AppLayout";
 
 const OrderConfirmation = () => {
   const navigate = useNavigate();

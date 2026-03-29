@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ArrowRight, Camera, Send, FileText, Car } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import AppLayout from "@/components/AppLayout";
+import AppLayout from "@/components/layout/AppLayout";
 import { vehicleMakes } from "@/data/products";
 
 const QuoteRequest = () => {

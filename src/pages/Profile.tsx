@@ -1,6 +1,6 @@
 import { ArrowRight, User, MapPin, CreditCard, Bell, LogOut, Heart, Package, Star, ChevronLeft, Gift, Moon, Sun, Info, Settings, Flame, RotateCcw, Shield, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import AppLayout from "@/components/AppLayout";
+import AppLayout from "@/components/layout/AppLayout";
 
 const menuSections = [
   {
