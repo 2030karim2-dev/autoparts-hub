@@ -1,6 +1,6 @@
 import { ArrowRight, Search, ChevronLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import AppLayout from "@/components/AppLayout";
+import AppLayout from "@/components/layout/AppLayout";
 import { categories } from "@/data/products";
 import { useState } from "react";
 

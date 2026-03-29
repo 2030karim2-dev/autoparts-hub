@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { ArrowRight, Send, Bot, User, Paperclip, Image } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import AppLayout from "@/components/AppLayout";
+import AppLayout from "@/components/layout/AppLayout";
 
 interface Message {
   id: string;

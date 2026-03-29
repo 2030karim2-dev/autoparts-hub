@@ -1,6 +1,6 @@
 import { ArrowRight, Package, CheckCircle, Truck, MapPin, Phone, MessageCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import AppLayout from "@/components/AppLayout";
+import AppLayout from "@/components/layout/AppLayout";
 
 const steps = [
   { label: "تم تأكيد الطلب", time: "اليوم 10:30 ص", done: true, icon: CheckCircle },

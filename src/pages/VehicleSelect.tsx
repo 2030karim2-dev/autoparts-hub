@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ArrowRight, Car, ChevronLeft, Check, Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import AppLayout from "@/components/AppLayout";
+import AppLayout from "@/components/layout/AppLayout";
 import { vehicleMakes, years } from "@/data/products";
 
 type Step = "make" | "model" | "year";

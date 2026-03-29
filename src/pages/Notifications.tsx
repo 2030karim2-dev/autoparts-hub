@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ArrowRight, Bell, Package, Truck, Tag, CheckCircle, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import AppLayout from "@/components/AppLayout";
+import AppLayout from "@/components/layout/AppLayout";
 
 interface Notification {
   id: string;

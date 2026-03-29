@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ArrowRight, Plus, MapPin, Edit2, Trash2, Check, Truck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import AppLayout from "@/components/AppLayout";
+import AppLayout from "@/components/layout/AppLayout";
 import { deliveryZones } from "@/data/yemenData";
 import { useCurrency } from "@/contexts/CurrencyContext";
 

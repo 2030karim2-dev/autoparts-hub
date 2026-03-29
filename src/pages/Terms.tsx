@@ -1,6 +1,6 @@
 import { ArrowRight, Shield, Truck, RotateCcw, CreditCard, Users, Scale } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import AppLayout from "@/components/AppLayout";
+import AppLayout from "@/components/layout/AppLayout";
 
 const sections = [
   {

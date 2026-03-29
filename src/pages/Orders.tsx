@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { ArrowRight, Filter, Truck, RotateCcw, Eye, Package, CheckCircle2, XCircle, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import AppLayout from "@/components/AppLayout";
-import { SkeletonOrderCard } from "@/components/SkeletonCard";
+import AppLayout from "@/components/layout/AppLayout";
+import { SkeletonOrderCard } from "@/components/product/SkeletonCard";
 import shockAbsorbers from "@/assets/shock-absorbers.png";
 import airFilter from "@/assets/air-filter.png";
 import controlArm from "@/assets/control-arm.png";

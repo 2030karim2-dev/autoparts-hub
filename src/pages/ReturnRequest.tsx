@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ArrowRight, Upload, Camera, Check, AlertTriangle, Package } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import AppLayout from "@/components/AppLayout";
+import AppLayout from "@/components/layout/AppLayout";
 import { returnReasons } from "@/data/yemenData";
 import { toast } from "sonner";
 

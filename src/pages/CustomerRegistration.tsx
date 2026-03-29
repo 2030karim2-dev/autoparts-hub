@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ArrowRight, Check, Upload, ChevronLeft, Shield } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import AppLayout from "@/components/AppLayout";
+import AppLayout from "@/components/layout/AppLayout";
 import { customerTypes, CustomerType } from "@/data/yemenData";
 import { toast } from "sonner";
 

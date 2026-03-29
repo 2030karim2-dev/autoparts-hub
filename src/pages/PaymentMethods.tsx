@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ArrowRight, Banknote, Building2, Smartphone, Copy, Check, Upload, ChevronDown, ChevronUp, Info } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import AppLayout from "@/components/AppLayout";
+import AppLayout from "@/components/layout/AppLayout";
 import { yemenExchanges, storeAccounts } from "@/data/yemenData";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { currencies } from "@/data/yemenData";
