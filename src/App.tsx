@@ -6,33 +6,45 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { CartProvider } from "@/contexts/CartContext";
 import { CompareProvider } from "@/contexts/CompareContext";
 import { CurrencyProvider } from "@/contexts/CurrencyContext";
-import Index from "./pages/Index.tsx";
-import ProductDetail from "./pages/ProductDetail.tsx";
-import Orders from "./pages/Orders.tsx";
-import Categories from "./pages/Categories.tsx";
-import Chat from "./pages/Chat.tsx";
-import Profile from "./pages/Profile.tsx";
-import Cart from "./pages/Cart.tsx";
-import Search from "./pages/Search.tsx";
-import VehicleSelect from "./pages/VehicleSelect.tsx";
-import Checkout from "./pages/Checkout.tsx";
-import Addresses from "./pages/Addresses.tsx";
-import OrderConfirmation from "./pages/OrderConfirmation.tsx";
-import OrderTracking from "./pages/OrderTracking.tsx";
-import Wishlist from "./pages/Wishlist.tsx";
-import Notifications from "./pages/Notifications.tsx";
-import Auth from "./pages/Auth.tsx";
-import QuoteRequest from "./pages/QuoteRequest.tsx";
-import Compare from "./pages/Compare.tsx";
-import About from "./pages/About.tsx";
-import Onboarding from "./pages/Onboarding.tsx";
-import Settings from "./pages/Settings.tsx";
-import Deals from "./pages/Deals.tsx";
-import PaymentMethods from "./pages/PaymentMethods.tsx";
-import CustomerRegistration from "./pages/CustomerRegistration.tsx";
-import ReturnRequest from "./pages/ReturnRequest.tsx";
-import Terms from "./pages/Terms.tsx";
-import NotFound from "./pages/NotFound.tsx";
+
+// Feature: Catalog
+import Index from "@/features/catalog/pages/Index";
+import ProductDetail from "@/features/catalog/pages/ProductDetail";
+import Search from "@/features/catalog/pages/Search";
+import Categories from "@/features/catalog/pages/Categories";
+import Deals from "@/features/catalog/pages/Deals";
+
+// Feature: Cart & Checkout
+import Cart from "@/features/cart/pages/Cart";
+import Checkout from "@/features/checkout/pages/Checkout";
+import OrderConfirmation from "@/features/checkout/pages/OrderConfirmation";
+
+// Feature: Orders
+import Orders from "./pages/Orders";
+import OrderTracking from "./pages/OrderTracking";
+import ReturnRequest from "./pages/ReturnRequest";
+
+// Feature: Auth & Customer
+import Auth from "@/features/auth/pages/Auth";
+import Profile from "./pages/Profile";
+import CustomerRegistration from "./pages/CustomerRegistration";
+
+// Feature: Payment & Shipping
+import PaymentMethods from "./pages/PaymentMethods";
+import Addresses from "./pages/Addresses";
+
+// Feature: Other
+import Compare from "./pages/Compare";
+import VehicleSelect from "./pages/VehicleSelect";
+import Wishlist from "./pages/Wishlist";
+import Notifications from "./pages/Notifications";
+import Chat from "./pages/Chat";
+import QuoteRequest from "./pages/QuoteRequest";
+import About from "./pages/About";
+import Onboarding from "./pages/Onboarding";
+import Settings from "./pages/Settings";
+import Terms from "./pages/Terms";
+import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
