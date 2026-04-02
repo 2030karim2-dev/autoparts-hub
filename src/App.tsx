@@ -33,6 +33,16 @@ import CustomerRegistration from "./pages/CustomerRegistration";
 import PaymentMethods from "./pages/PaymentMethods";
 import Addresses from "./pages/Addresses";
 
+// Feature: Admin
+import AdminDashboard from "@/features/admin/pages/AdminDashboard";
+import AdminProducts from "@/features/admin/pages/AdminProducts";
+import AdminOrders from "@/features/admin/pages/AdminOrders";
+import AdminCustomers from "@/features/admin/pages/AdminCustomers";
+import AdminDelivery from "@/features/admin/pages/AdminDelivery";
+import AdminReturns from "@/features/admin/pages/AdminReturns";
+import AdminReports from "@/features/admin/pages/AdminReports";
+import AdminSettings from "@/features/admin/pages/AdminSettings";
+
 // Feature: Other
 import Compare from "./pages/Compare";
 import VehicleSelect from "./pages/VehicleSelect";
