@@ -41,7 +41,25 @@ const topProducts = [
   { name: "فلتر زيت بوش", sold: 87, revenue: 3480 },
 ];
 
-const AdminReports = () => (
+const exportCSV = (data: Record<string, any>[], filename: string) => {
+  if (!data.length) return;
+  const headers = Object.keys(data[0]);
+  const csv = [
+    headers.join(","),
+    ...data.map(row => headers.map(h => `"${row[h]}"`).join(","))
+  ].join("\n");
+  const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = `${filename}.csv`;
+  link.click();
+};
+
+const AdminReports = () => {
+  const handleExportSales = () => exportCSV(monthlySales, "تقرير_المبيعات");
+  const handleExportProducts = () => exportCSV(topProducts, "المنتجات_الأكثر_مبيعاً");
+  const handleExportRegions = () => exportCSV(regionSales, "المبيعات_حسب_المنطقة");
+
   <AdminLayout>
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
