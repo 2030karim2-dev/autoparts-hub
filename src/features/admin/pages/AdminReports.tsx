@@ -199,6 +199,7 @@ const AdminReports = () => {
       </Card>
     </div>
   </AdminLayout>
-);
+  );
+};
 
 export default AdminReports;
