@@ -42,6 +42,9 @@ import AdminDelivery from "@/features/admin/pages/AdminDelivery";
 import AdminReturns from "@/features/admin/pages/AdminReturns";
 import AdminReports from "@/features/admin/pages/AdminReports";
 import AdminSettings from "@/features/admin/pages/AdminSettings";
+import AdminNotifications from "@/features/admin/pages/AdminNotifications";
+import AdminCoupons from "@/features/admin/pages/AdminCoupons";
+import AdminCategories from "@/features/admin/pages/AdminCategories";
 
 // Feature: Other
 import Compare from "./pages/Compare";
