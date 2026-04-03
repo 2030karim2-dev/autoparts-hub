@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Download, TrendingUp, MapPin, Users, Package } from "lucide-react";
+import { TrendingUp, MapPin, Users, Package } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, AreaChart, Area
@@ -41,29 +41,59 @@ const topProducts = [
   { name: "فلتر زيت بوش", sold: 87, revenue: 3480 },
 ];
 
-const AdminReports = () => (
-  <AdminLayout>
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <h1 className="text-xl md:text-2xl font-bold text-foreground">التقارير والإحصائيات</h1>
-          <p className="text-sm text-muted-foreground mt-1">تحليل شامل لأداء المتجر</p>
-        </div>
-        <div className="flex gap-2">
-          <Select defaultValue="monthly">
-            <SelectTrigger className="w-32 h-9 text-xs">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="weekly">أسبوعي</SelectItem>
-              <SelectItem value="monthly">شهري</SelectItem>
-              <SelectItem value="yearly">سنوي</SelectItem>
-            </SelectContent>
-          </Select>
-          <Button size="sm" variant="outline" className="text-xs gap-1">
-            <Download className="h-3.5 w-3.5" /> تصدير
-          </Button>
-        </div>
+const exportCSV = (data: Record<string, any>[], filename: string) => {
+  if (!data.length) return;
+  const headers = Object.keys(data[0]);
+  const csv = [
+    headers.join(","),
+    ...data.map(row => headers.map(h => `"${row[h]}"`).join(","))
+  ].join("\n");
+  const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = `${filename}.csv`;
+  link.click();
+};
+
+const AdminReports = () => {
+  const handleExportSales = () => exportCSV(monthlySales, "تقرير_المبيعات");
+  const handleExportProducts = () => exportCSV(topProducts, "المنتجات_الأكثر_مبيعاً");
+  const handleExportRegions = () => exportCSV(regionSales, "المبيعات_حسب_المنطقة");
+
+  return (
+    <AdminLayout>
+      <div className="space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h1 className="text-xl md:text-2xl font-bold text-foreground">التقارير والإحصائيات</h1>
+            <p className="text-sm text-muted-foreground mt-1">تحليل شامل لأداء المتجر</p>
+          </div>
+          <div className="flex gap-2">
+            <Select defaultValue="monthly">
+              <SelectTrigger className="w-32 h-9 text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="weekly">أسبوعي</SelectItem>
+                <SelectItem value="monthly">شهري</SelectItem>
+                <SelectItem value="yearly">سنوي</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select onValueChange={(v) => {
+              if (v === "sales") handleExportSales();
+              if (v === "products") handleExportProducts();
+              if (v === "regions") handleExportRegions();
+            }}>
+              <SelectTrigger className="w-36 h-9 text-xs">
+                <SelectValue placeholder="📥 تصدير CSV" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="sales">تقرير المبيعات</SelectItem>
+                <SelectItem value="products">أكثر المنتجات مبيعاً</SelectItem>
+                <SelectItem value="regions">المبيعات حسب المنطقة</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
       </div>
 
       {/* Summary KPIs */}
@@ -169,6 +199,7 @@ const AdminReports = () => (
       </Card>
     </div>
   </AdminLayout>
-);
+  );
+};
 
 export default AdminReports;

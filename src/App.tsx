@@ -42,6 +42,9 @@ import AdminDelivery from "@/features/admin/pages/AdminDelivery";
 import AdminReturns from "@/features/admin/pages/AdminReturns";
 import AdminReports from "@/features/admin/pages/AdminReports";
 import AdminSettings from "@/features/admin/pages/AdminSettings";
+import AdminNotifications from "@/features/admin/pages/AdminNotifications";
+import AdminCoupons from "@/features/admin/pages/AdminCoupons";
+import AdminCategories from "@/features/admin/pages/AdminCategories";
 
 // Feature: Other
 import Compare from "./pages/Compare";
@@ -97,10 +100,13 @@ const App = () => (
                 {/* Admin Routes */}
                 <Route path="/admin" element={<AdminDashboard />} />
                 <Route path="/admin/products" element={<AdminProducts />} />
+                <Route path="/admin/categories" element={<AdminCategories />} />
                 <Route path="/admin/orders" element={<AdminOrders />} />
                 <Route path="/admin/customers" element={<AdminCustomers />} />
+                <Route path="/admin/coupons" element={<AdminCoupons />} />
                 <Route path="/admin/delivery" element={<AdminDelivery />} />
                 <Route path="/admin/returns" element={<AdminReturns />} />
+                <Route path="/admin/notifications" element={<AdminNotifications />} />
                 <Route path="/admin/reports" element={<AdminReports />} />
                 <Route path="/admin/settings" element={<AdminSettings />} />
                 <Route path="*" element={<NotFound />} />
