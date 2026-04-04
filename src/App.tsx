@@ -102,6 +102,7 @@ const App = () => (
                 {/* Admin Routes */}
                 <Route path="/admin" element={<AdminDashboard />} />
                 <Route path="/admin/products" element={<AdminProducts />} />
+                <Route path="/admin/inventory" element={<AdminInventory />} />
                 <Route path="/admin/categories" element={<AdminCategories />} />
                 <Route path="/admin/orders" element={<AdminOrders />} />
                 <Route path="/admin/customers" element={<AdminCustomers />} />
@@ -110,6 +111,7 @@ const App = () => (
                 <Route path="/admin/returns" element={<AdminReturns />} />
                 <Route path="/admin/notifications" element={<AdminNotifications />} />
                 <Route path="/admin/reports" element={<AdminReports />} />
+                <Route path="/admin/activity" element={<AdminActivityLog />} />
                 <Route path="/admin/settings" element={<AdminSettings />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
