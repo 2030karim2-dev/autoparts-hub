@@ -3,7 +3,7 @@ import { NavLink, useLocation } from "react-router-dom";
 import {
   LayoutDashboard, Package, ShoppingCart, Users, Truck, RotateCcw,
   Settings, BarChart3, ChevronRight, ChevronLeft, Menu, Bell, Search, LogOut,
-  Megaphone, Tag, FolderOpen
+  Megaphone, Tag, FolderOpen, Boxes, Activity
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 const navItems = [
   { to: "/admin", icon: LayoutDashboard, label: "لوحة التحكم", end: true },
   { to: "/admin/products", icon: Package, label: "المنتجات" },
+  { to: "/admin/inventory", icon: Boxes, label: "المخزون" },
   { to: "/admin/categories", icon: FolderOpen, label: "الفئات" },
   { to: "/admin/orders", icon: ShoppingCart, label: "الطلبات", badge: 5 },
   { to: "/admin/customers", icon: Users, label: "العملاء" },
@@ -21,6 +22,7 @@ const navItems = [
   { to: "/admin/returns", icon: RotateCcw, label: "المرتجعات", badge: 2 },
   { to: "/admin/notifications", icon: Megaphone, label: "الإشعارات" },
   { to: "/admin/reports", icon: BarChart3, label: "التقارير" },
+  { to: "/admin/activity", icon: Activity, label: "سجل النشاطات" },
   { to: "/admin/settings", icon: Settings, label: "الإعدادات" },
 ];
 
