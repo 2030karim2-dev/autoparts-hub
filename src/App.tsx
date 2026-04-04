@@ -45,6 +45,8 @@ import AdminSettings from "@/features/admin/pages/AdminSettings";
 import AdminNotifications from "@/features/admin/pages/AdminNotifications";
 import AdminCoupons from "@/features/admin/pages/AdminCoupons";
 import AdminCategories from "@/features/admin/pages/AdminCategories";
+import AdminInventory from "@/features/admin/pages/AdminInventory";
+import AdminActivityLog from "@/features/admin/pages/AdminActivityLog";
 
 // Feature: Other
 import Compare from "./pages/Compare";
