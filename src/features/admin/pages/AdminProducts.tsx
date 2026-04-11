@@ -1,4 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useDebounce } from "@/hooks/useDebounce";
+import { usePagination } from "@/hooks/usePagination";
+import AdminTablePagination from "../components/AdminTablePagination";
+import AdminEmptyState from "../components/AdminEmptyState";
 import AdminLayout from "../components/AdminLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -45,11 +49,15 @@ const AdminProducts = () => {
   const [form, setForm] = useState<ProductForm>(emptyForm);
   const [errors, setErrors] = useState<Partial<Record<keyof ProductForm, string>>>({});
 
+  const debouncedSearch = useDebounce(search, 300);
+
   const filtered = productsList.filter((p) => {
-    const matchSearch = p.name.toLowerCase().includes(search.toLowerCase()) || p.sku.includes(search);
+    const matchSearch = p.name.toLowerCase().includes(debouncedSearch.toLowerCase()) || p.sku.includes(debouncedSearch);
     const matchCat = category === "الكل" || p.category === category;
     return matchSearch && matchCat;
   });
+
+  const pagination = usePagination(filtered, { pageSize: 8 });
 
   const lowStock = productsList.filter((p) => !p.inStock).length;
 
@@ -179,9 +187,9 @@ const AdminProducts = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filtered.length === 0 ? (
-                    <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">لا توجد منتجات مطابقة</TableCell></TableRow>
-                  ) : filtered.map((product) => (
+                  {pagination.paginatedItems.length === 0 ? (
+                    <TableRow><TableCell colSpan={6} className="p-0"><AdminEmptyState title="لا توجد منتجات مطابقة" description="جرب تغيير كلمات البحث أو الفلتر" /></TableCell></TableRow>
+                  ) : pagination.paginatedItems.map((product) => (
                     <TableRow key={product.id}>
                       <TableCell>
                         <div className="flex items-center gap-2">
@@ -216,7 +224,8 @@ const AdminProducts = () => {
                 </TableBody>
               </Table>
             </div>
-          </CardContent>
+           </CardContent>
+          <AdminTablePagination {...pagination} />
         </Card>
 
         {/* Add/Edit Dialog */}

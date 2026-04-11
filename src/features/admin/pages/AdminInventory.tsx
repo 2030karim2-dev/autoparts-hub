@@ -1,4 +1,8 @@
 import { useState } from "react";
+import { useDebounce } from "@/hooks/useDebounce";
+import { usePagination } from "@/hooks/usePagination";
+import AdminTablePagination from "../components/AdminTablePagination";
+import AdminEmptyState from "../components/AdminEmptyState";
 import AdminLayout from "../components/AdminLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -62,11 +66,15 @@ const AdminInventory = () => {
     ],
   });
 
+  const debouncedSearch = useDebounce(search, 300);
+
   const filtered = items.filter((item) => {
-    const matchSearch = item.name.includes(search) || item.sku.toLowerCase().includes(search.toLowerCase());
+    const matchSearch = item.name.includes(debouncedSearch) || item.sku.toLowerCase().includes(debouncedSearch.toLowerCase());
     const matchStatus = statusFilter === "الكل" || item.status === statusFilter;
     return matchSearch && matchStatus;
   });
+
+  const pagination = usePagination(filtered, { pageSize: 8 });
 
   const outOfStock = items.filter(i => i.status === "نفد المخزون").length;
   const lowStock = items.filter(i => i.status === "مخزون منخفض").length;
@@ -146,9 +154,9 @@ const AdminInventory = () => {
                   <TableHead className="text-right w-24">إجراء</TableHead>
                 </TableRow></TableHeader>
                 <TableBody>
-                  {filtered.length === 0 ? (
-                    <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">لا توجد منتجات مطابقة</TableCell></TableRow>
-                  ) : filtered.map((item) => {
+                  {pagination.paginatedItems.length === 0 ? (
+                    <TableRow><TableCell colSpan={6} className="p-0"><AdminEmptyState title="لا توجد منتجات مطابقة" description="جرب تغيير كلمات البحث أو الفلتر" /></TableCell></TableRow>
+                  ) : pagination.paginatedItems.map((item) => {
                     const stockPercent = Math.min((item.currentStock / item.maxStock) * 100, 100);
                     return (
                       <TableRow key={item.id}>
@@ -167,7 +175,8 @@ const AdminInventory = () => {
                 </TableBody>
               </Table>
             </div>
-          </CardContent>
+           </CardContent>
+          <AdminTablePagination {...pagination} />
         </Card>
 
         {/* Detail dialog */}
