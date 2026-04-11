@@ -1,4 +1,8 @@
 import { useState } from "react";
+import { useDebounce } from "@/hooks/useDebounce";
+import { usePagination } from "@/hooks/usePagination";
+import AdminTablePagination from "../components/AdminTablePagination";
+import AdminEmptyState from "../components/AdminEmptyState";
 import AdminLayout from "../components/AdminLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -41,11 +45,15 @@ const AdminCustomers = () => {
   const [selected, setSelected] = useState<Customer | null>(null);
   const [banTarget, setBanTarget] = useState<Customer | null>(null);
 
+  const debouncedSearch = useDebounce(search, 300);
+
   const filtered = customers.filter((c) => {
-    const matchSearch = c.name.includes(search) || c.phone.includes(search);
+    const matchSearch = c.name.includes(debouncedSearch) || c.phone.includes(debouncedSearch);
     const matchType = typeFilter === "الكل" || c.type === typeFilter;
     return matchSearch && matchType;
   });
+
+  const pagination = usePagination(filtered, { pageSize: 8 });
 
   const typeCounts = {
     retail: customers.filter(c => c.type === "retail").length,
@@ -131,9 +139,9 @@ const AdminCustomers = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filtered.length === 0 ? (
-                    <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">لا يوجد عملاء مطابقون</TableCell></TableRow>
-                  ) : filtered.map((customer) => (
+                  {pagination.paginatedItems.length === 0 ? (
+                    <TableRow><TableCell colSpan={6} className="p-0"><AdminEmptyState title="لا يوجد عملاء مطابقون" description="جرب تغيير كلمات البحث أو الفلتر" /></TableCell></TableRow>
+                  ) : pagination.paginatedItems.map((customer) => (
                     <TableRow key={customer.id}>
                       <TableCell><p className="text-sm font-medium text-foreground">{customer.name}</p><p className="text-[10px] text-muted-foreground">{customer.phone} • {customer.city}</p></TableCell>
                       <TableCell className="hidden sm:table-cell"><Badge variant="outline" className="text-[10px]">{customer.typeLabel}</Badge></TableCell>
@@ -146,7 +154,8 @@ const AdminCustomers = () => {
                 </TableBody>
               </Table>
             </div>
-          </CardContent>
+           </CardContent>
+          <AdminTablePagination {...pagination} />
         </Card>
 
         {/* Detail dialog */}

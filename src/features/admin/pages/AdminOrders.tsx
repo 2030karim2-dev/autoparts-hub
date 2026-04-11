@@ -1,4 +1,8 @@
 import { useState } from "react";
+import { useDebounce } from "@/hooks/useDebounce";
+import { usePagination } from "@/hooks/usePagination";
+import AdminTablePagination from "../components/AdminTablePagination";
+import AdminEmptyState from "../components/AdminEmptyState";
 import AdminLayout from "../components/AdminLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -57,11 +61,15 @@ const AdminOrders = () => {
   const [newStatus, setNewStatus] = useState<OrderStatus | "">("");
   const [orderNote, setOrderNote] = useState("");
 
+  const debouncedSearch = useDebounce(search, 300);
+
   const filtered = orders.filter((o) => {
-    const matchSearch = o.id.includes(search) || o.customer.includes(search);
+    const matchSearch = o.id.includes(debouncedSearch) || o.customer.includes(debouncedSearch);
     const matchStatus = statusFilter === "الكل" || o.status === statusFilter;
     return matchSearch && matchStatus;
   });
+
+  const pagination = usePagination(filtered, { pageSize: 8 });
 
   const statusCounts = statuses.reduce((acc, s) => ({ ...acc, [s]: orders.filter(o => o.status === s).length }), {} as Record<string, number>);
 
@@ -143,9 +151,9 @@ const AdminOrders = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filtered.length === 0 ? (
-                    <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">لا توجد طلبات مطابقة</TableCell></TableRow>
-                  ) : filtered.map((order) => (
+                  {pagination.paginatedItems.length === 0 ? (
+                    <TableRow><TableCell colSpan={6} className="p-0"><AdminEmptyState title="لا توجد طلبات مطابقة" description="جرب تغيير كلمات البحث أو الفلتر" /></TableCell></TableRow>
+                  ) : pagination.paginatedItems.map((order) => (
                     <TableRow key={order.id}>
                       <TableCell><span className="text-sm font-mono font-medium text-foreground">{order.id}</span><p className="text-[10px] text-muted-foreground">{order.date}</p></TableCell>
                       <TableCell><p className="text-sm font-medium text-foreground">{order.customer}</p><p className="text-[10px] text-muted-foreground">{order.customerType} • {order.city}</p></TableCell>
@@ -164,7 +172,8 @@ const AdminOrders = () => {
                 </TableBody>
               </Table>
             </div>
-          </CardContent>
+           </CardContent>
+          <AdminTablePagination {...pagination} />
         </Card>
 
         {/* Order detail dialog */}

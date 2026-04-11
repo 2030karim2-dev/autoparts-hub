@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { usePagination } from "@/hooks/usePagination";
+import AdminTablePagination from "../components/AdminTablePagination";
+import AdminEmptyState from "../components/AdminEmptyState";
 import AdminLayout from "../components/AdminLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -40,6 +43,7 @@ const AdminCoupons = () => {
   const [form, setForm] = useState<CouponForm>(emptyForm);
   const [errors, setErrors] = useState<Partial<Record<keyof CouponForm, string>>>({});
 
+  const pagination = usePagination(coupons, { pageSize: 8 });
   const activeCoupons = coupons.filter(c => c.active).length;
   const totalUsage = coupons.reduce((a, c) => a + c.usedCount, 0);
 
@@ -121,9 +125,9 @@ const AdminCoupons = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {coupons.length === 0 ? (
-                    <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">لا توجد كوبونات</TableCell></TableRow>
-                  ) : coupons.map((coupon) => (
+                  {pagination.paginatedItems.length === 0 ? (
+                    <TableRow><TableCell colSpan={6} className="p-0"><AdminEmptyState title="لا توجد كوبونات" description="أنشئ كوبون خصم جديد لعملائك" /></TableCell></TableRow>
+                  ) : pagination.paginatedItems.map((coupon) => (
                     <TableRow key={coupon.id}>
                       <TableCell>
                         <div className="flex items-center gap-2">
@@ -159,7 +163,8 @@ const AdminCoupons = () => {
                 </TableBody>
               </Table>
             </div>
-          </CardContent>
+           </CardContent>
+          <AdminTablePagination {...pagination} />
         </Card>
 
         {/* Add/Edit Dialog */}
