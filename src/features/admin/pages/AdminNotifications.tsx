@@ -1,4 +1,8 @@
 import { useState } from "react";
+import { useDebounce } from "@/hooks/useDebounce";
+import { usePagination } from "@/hooks/usePagination";
+import AdminTablePagination from "../components/AdminTablePagination";
+import AdminEmptyState from "../components/AdminEmptyState";
 import AdminLayout from "../components/AdminLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,7 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { Bell, Send, Users, Megaphone, Clock, CheckCircle, Plus, Trash2 } from "lucide-react";
+import { Bell, Send, Users, Megaphone, Clock, CheckCircle, Plus, Trash2, Search } from "lucide-react";
 import { toast } from "sonner";
 
 interface Notification {
@@ -27,9 +31,9 @@ const initialNotifications: Notification[] = [
 ];
 
 const typeColors: Record<string, string> = {
-  "عرض": "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
-  "تحديث طلب": "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
-  "تنبيه": "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400",
+  "عرض": "bg-primary/10 text-primary dark:bg-primary/20",
+  "تحديث طلب": "bg-accent/50 text-accent-foreground",
+  "تنبيه": "bg-warning/10 text-warning dark:bg-warning/20",
   "عام": "bg-muted text-muted-foreground",
 };
 
@@ -43,11 +47,20 @@ const AdminNotifications = () => {
   const [notifications, setNotifications] = useState<Notification[]>(initialNotifications);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [typeFilter, setTypeFilter] = useState("الكل");
+  const [search, setSearch] = useState("");
   const [form, setForm] = useState<NotifForm>(emptyForm);
   const [errors, setErrors] = useState<Partial<Record<keyof NotifForm, string>>>({});
   const [deleteTarget, setDeleteTarget] = useState<Notification | null>(null);
 
-  const filtered = notifications.filter(n => typeFilter === "الكل" || n.type === typeFilter);
+  const debouncedSearch = useDebounce(search, 300);
+
+  const filtered = notifications.filter(n => {
+    const matchType = typeFilter === "الكل" || n.type === typeFilter;
+    const matchSearch = n.title.includes(debouncedSearch) || n.message.includes(debouncedSearch);
+    return matchType && matchSearch;
+  });
+
+  const pagination = usePagination(filtered, { pageSize: 6 });
 
   const handleSend = (scheduled: boolean) => {
     const newErrors: Partial<Record<keyof NotifForm, string>> = {};
@@ -92,13 +105,20 @@ const AdminNotifications = () => {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {[
             { label: "إجمالي الإشعارات", value: notifications.length, icon: Bell, color: "text-primary" },
-            { label: "المرسلة", value: notifications.filter(n => n.status === "مرسل").length, icon: CheckCircle, color: "text-green-600" },
-            { label: "المجدولة", value: notifications.filter(n => n.status === "مجدول").length, icon: Clock, color: "text-yellow-600" },
+            { label: "المرسلة", value: notifications.filter(n => n.status === "مرسل").length, icon: CheckCircle, color: "text-primary" },
+            { label: "المجدولة", value: notifications.filter(n => n.status === "مجدول").length, icon: Clock, color: "text-warning" },
             { label: "الوصول", value: notifications.length > 0 ? `${Math.round((notifications.reduce((a, n) => a + n.readCount, 0) / Math.max(notifications.reduce((a, n) => a + n.totalCount, 0), 1)) * 100)}%` : "0%", icon: Users, color: "text-accent-foreground" },
           ].map((s) => (
             <Card key={s.label}><CardContent className="p-3 text-center"><s.icon className={`h-5 w-5 mx-auto mb-1 ${s.color}`} /><p className="text-lg font-bold text-foreground">{s.value}</p><p className="text-[10px] text-muted-foreground">{s.label}</p></CardContent></Card>
           ))}
         </div>
+
+        <Card><CardContent className="p-3">
+          <div className="relative">
+            <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input placeholder="بحث في الإشعارات..." value={search} onChange={(e) => setSearch(e.target.value)} className="pr-9 h-9 text-sm" />
+          </div>
+        </CardContent></Card>
 
         <div className="flex gap-2 overflow-x-auto pb-1">
           {["الكل", "عرض", "تحديث طلب", "تنبيه", "عام"].map((t) => (
@@ -107,9 +127,9 @@ const AdminNotifications = () => {
         </div>
 
         <div className="space-y-3">
-          {filtered.length === 0 ? (
-            <Card><CardContent className="p-8 text-center text-muted-foreground">لا توجد إشعارات</CardContent></Card>
-          ) : filtered.map((notif) => (
+          {pagination.paginatedItems.length === 0 ? (
+            <AdminEmptyState title="لا توجد إشعارات" description="جرب تغيير كلمات البحث أو الفلتر" />
+          ) : pagination.paginatedItems.map((notif) => (
             <Card key={notif.id} className="overflow-hidden">
               <CardContent className="p-4">
                 <div className="flex items-start gap-3">
@@ -135,6 +155,8 @@ const AdminNotifications = () => {
             </Card>
           ))}
         </div>
+
+        {pagination.totalPages > 1 && <AdminTablePagination {...pagination} />}
 
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogContent className="max-w-lg" dir="rtl">

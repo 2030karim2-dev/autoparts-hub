@@ -40,18 +40,36 @@ const initialOrders: Order[] = [
 
 const statuses: OrderStatus[] = ["جديد", "قيد المعالجة", "قيد الشحن", "مكتمل", "ملغي"];
 const statusConfig: Record<OrderStatus, { icon: any; color: string }> = {
-  "جديد": { icon: Clock, color: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400" },
-  "قيد المعالجة": { icon: ShoppingCart, color: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400" },
-  "قيد الشحن": { icon: Truck, color: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400" },
-  "مكتمل": { icon: CheckCircle, color: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" },
-  "ملغي": { icon: XCircle, color: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400" },
+  "جديد": { icon: Clock, color: "bg-accent text-accent-foreground" },
+  "قيد المعالجة": { icon: ShoppingCart, color: "bg-warning/10 text-warning" },
+  "قيد الشحن": { icon: Truck, color: "bg-primary/10 text-primary" },
+  "مكتمل": { icon: CheckCircle, color: "bg-primary/10 text-primary" },
+  "ملغي": { icon: XCircle, color: "bg-destructive/10 text-destructive" },
 };
 const paymentStatusColor: Record<PaymentStatus, string> = {
-  "بانتظار التأكيد": "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400",
-  "مؤكد": "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
-  "مرفوض": "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
+  "بانتظار التأكيد": "bg-warning/10 text-warning",
+  "مؤكد": "bg-primary/10 text-primary",
+  "مرفوض": "bg-destructive/10 text-destructive",
 };
 const timelineIcons: Record<string, any> = { "جديد": Clock, "قيد المعالجة": Package, "قيد الشحن": Truck, "مكتمل": CheckCircle, "ملغي": XCircle };
+
+const exportOrdersCSV = (orders: Order[]) => {
+  if (!orders.length) return;
+  const rows = orders.map(o => ({
+    "رقم الطلب": o.id, "العميل": o.customer, "النوع": o.customerType,
+    "المدينة": o.city, "المبلغ": o.total, "التوصيل": o.deliveryFee,
+    "طريقة الدفع": o.paymentMethod, "حالة الدفع": o.paymentStatus,
+    "الحالة": o.status, "التاريخ": o.date,
+  }));
+  const headers = Object.keys(rows[0]);
+  const csv = [headers.join(","), ...rows.map(r => headers.map(h => `"${r[h as keyof typeof r]}"`).join(","))].join("\n");
+  const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "الطلبات.csv";
+  link.click();
+  URL.revokeObjectURL(link.href);
+};
 
 const AdminOrders = () => {
   const [orders, setOrders] = useState<Order[]>(initialOrders);
@@ -76,13 +94,11 @@ const AdminOrders = () => {
   const handleStatusChange = (orderId: string, status: OrderStatus) => {
     const now = new Date().toISOString().replace("T", " ").slice(0, 16);
     setOrders(prev => prev.map(o => o.id === orderId ? {
-      ...o,
-      status,
+      ...o, status,
       timeline: [...o.timeline, { status, date: now, note: orderNote || undefined }],
     } : o));
     setSelectedOrder(prev => prev && prev.id === orderId ? {
-      ...prev,
-      status,
+      ...prev, status,
       timeline: [...prev.timeline, { status, date: now, note: orderNote || undefined }],
     } : prev);
     toast.success(`تم تحديث حالة الطلب ${orderId} إلى "${status}"`);
@@ -96,7 +112,13 @@ const AdminOrders = () => {
   };
 
   const handlePrint = () => {
-    window.print();
+    const printContent = document.getElementById("invoice-print-area");
+    if (!printContent) { window.print(); return; }
+    const win = window.open("", "_blank");
+    if (!win) return;
+    win.document.write(`<html dir="rtl"><head><title>فاتورة ${selectedOrder?.id}</title><style>body{font-family:system-ui,sans-serif;padding:24px;font-size:14px}table{width:100%;border-collapse:collapse;margin:16px 0}th,td{border:1px solid #ddd;padding:8px;text-align:right}th{background:#f5f5f5}.total{font-weight:bold;font-size:16px}</style></head><body>${printContent.innerHTML}</body></html>`);
+    win.document.close();
+    win.print();
   };
 
   const openOrderDetail = (order: Order) => {
@@ -113,15 +135,17 @@ const AdminOrders = () => {
             <h1 className="text-xl md:text-2xl font-bold text-foreground">إدارة الطلبات</h1>
             <p className="text-sm text-muted-foreground mt-1">{orders.length} طلب</p>
           </div>
-          <Button size="sm" variant="outline" className="gap-1.5 text-xs"><FileText className="h-4 w-4" /> تصدير الطلبات</Button>
+          <Button size="sm" variant="outline" className="gap-1.5 text-xs" onClick={() => exportOrdersCSV(orders)}>
+            <FileText className="h-4 w-4" /> تصدير الطلبات
+          </Button>
         </div>
 
         {/* KPIs */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           <Card><CardContent className="p-3 text-center"><ShoppingCart className="h-5 w-5 text-primary mx-auto mb-1" /><p className="text-lg font-bold text-foreground">{orders.length}</p><p className="text-[10px] text-muted-foreground">إجمالي الطلبات</p></CardContent></Card>
-          <Card><CardContent className="p-3 text-center"><Clock className="h-5 w-5 text-yellow-600 mx-auto mb-1" /><p className="text-lg font-bold text-foreground">{(statusCounts["جديد"] || 0) + (statusCounts["قيد المعالجة"] || 0)}</p><p className="text-[10px] text-muted-foreground">بانتظار المعالجة</p></CardContent></Card>
-          <Card><CardContent className="p-3 text-center"><Truck className="h-5 w-5 text-purple-600 mx-auto mb-1" /><p className="text-lg font-bold text-foreground">{statusCounts["قيد الشحن"] || 0}</p><p className="text-[10px] text-muted-foreground">قيد الشحن</p></CardContent></Card>
-          <Card><CardContent className="p-3 text-center"><CreditCard className="h-5 w-5 text-orange-600 mx-auto mb-1" /><p className="text-lg font-bold text-foreground">{orders.filter(o => o.paymentStatus === "بانتظار التأكيد").length}</p><p className="text-[10px] text-muted-foreground">بانتظار تأكيد الدفع</p></CardContent></Card>
+          <Card><CardContent className="p-3 text-center"><Clock className="h-5 w-5 text-warning mx-auto mb-1" /><p className="text-lg font-bold text-foreground">{(statusCounts["جديد"] || 0) + (statusCounts["قيد المعالجة"] || 0)}</p><p className="text-[10px] text-muted-foreground">بانتظار المعالجة</p></CardContent></Card>
+          <Card><CardContent className="p-3 text-center"><Truck className="h-5 w-5 text-primary mx-auto mb-1" /><p className="text-lg font-bold text-foreground">{statusCounts["قيد الشحن"] || 0}</p><p className="text-[10px] text-muted-foreground">قيد الشحن</p></CardContent></Card>
+          <Card><CardContent className="p-3 text-center"><CreditCard className="h-5 w-5 text-warning mx-auto mb-1" /><p className="text-lg font-bold text-foreground">{orders.filter(o => o.paymentStatus === "بانتظار التأكيد").length}</p><p className="text-[10px] text-muted-foreground">بانتظار تأكيد الدفع</p></CardContent></Card>
         </div>
 
         {/* Status tabs */}
@@ -172,13 +196,13 @@ const AdminOrders = () => {
                 </TableBody>
               </Table>
             </div>
-           </CardContent>
+          </CardContent>
           <AdminTablePagination {...pagination} />
         </Card>
 
         {/* Order detail dialog */}
         <Dialog open={!!selectedOrder} onOpenChange={() => setSelectedOrder(null)}>
-          <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto print:max-w-full print:shadow-none" dir="rtl">
+          <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto" dir="rtl">
             <DialogHeader>
               <div className="flex items-center justify-between">
                 <DialogTitle>تفاصيل الطلب {selectedOrder?.id}</DialogTitle>
@@ -186,7 +210,7 @@ const AdminOrders = () => {
               </div>
             </DialogHeader>
             {selectedOrder && (
-              <div className="space-y-4">
+              <div className="space-y-4" id="invoice-print-area">
                 {/* Customer & address */}
                 <div className="grid grid-cols-2 gap-3">
                   <div className="p-3 rounded-lg bg-muted/50">
@@ -262,7 +286,7 @@ const AdminOrders = () => {
                   </div>
                 )}
 
-                {/* Actions - only if not completed or cancelled */}
+                {/* Actions */}
                 {selectedOrder.status !== "مكتمل" && selectedOrder.status !== "ملغي" && (
                   <>
                     <div className="space-y-2">
@@ -279,7 +303,7 @@ const AdminOrders = () => {
 
                     {selectedOrder.paymentStatus === "بانتظار التأكيد" && (
                       <div className="flex gap-2">
-                        <Button size="sm" className="flex-1 bg-green-600 hover:bg-green-700 text-white" onClick={() => handlePaymentAction(selectedOrder.id, "مؤكد")}>تأكيد الدفع</Button>
+                        <Button size="sm" className="flex-1" onClick={() => handlePaymentAction(selectedOrder.id, "مؤكد")}>تأكيد الدفع</Button>
                         <Button size="sm" variant="destructive" className="flex-1" onClick={() => handlePaymentAction(selectedOrder.id, "مرفوض")}>رفض</Button>
                       </div>
                     )}
