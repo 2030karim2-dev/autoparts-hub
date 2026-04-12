@@ -1,13 +1,18 @@
 import { useState } from "react";
+import { useDebounce } from "@/hooks/useDebounce";
+import { usePagination } from "@/hooks/usePagination";
+import AdminTablePagination from "../components/AdminTablePagination";
+import AdminEmptyState from "../components/AdminEmptyState";
 import AdminLayout from "../components/AdminLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
-import { Eye, CheckCircle, XCircle, Clock } from "lucide-react";
+import { Eye, CheckCircle, XCircle, Clock, Search } from "lucide-react";
 import { toast } from "sonner";
 
 type ReturnStatus = "بانتظار المراجعة" | "مقبول" | "مرفوض";
@@ -23,21 +28,32 @@ const initialReturns: ReturnRequest[] = [
   { id: "RET-100", orderId: "ORD-1018", customer: "خالد سعيد", product: "فلتر هواء تويوتا", reason: "المنتج تالف أو معيب", status: "بانتظار المراجعة", date: "2026-03-31", amount: 50 },
   { id: "RET-099", orderId: "ORD-1015", customer: "ورشة الأمين", product: "تيل فرامل سيراميك", reason: "تم إرسال منتج خاطئ", status: "مقبول", date: "2026-03-29", amount: 100 },
   { id: "RET-098", orderId: "ORD-1010", customer: "علي حسين", product: "مساعدات KYB", reason: "وجدت سعر أفضل", status: "مرفوض", date: "2026-03-28", amount: 250, adminNote: "السبب غير مقبول حسب سياسة الإرجاع" },
+  { id: "RET-097", orderId: "ORD-1008", customer: "مركز الوفاء", product: "سير مروحة تويوتا", reason: "المنتج لا يتوافق مع السيارة", status: "بانتظار المراجعة", date: "2026-03-27", amount: 35 },
+  { id: "RET-096", orderId: "ORD-1005", customer: "تجارة العولقي", product: "فلتر زيت بوش", reason: "المنتج تالف أو معيب", status: "مقبول", date: "2026-03-25", amount: 40 },
 ];
 
 const statusConfig: Record<ReturnStatus, { icon: any; color: string }> = {
-  "بانتظار المراجعة": { icon: Clock, color: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400" },
-  "مقبول": { icon: CheckCircle, color: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" },
-  "مرفوض": { icon: XCircle, color: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400" },
+  "بانتظار المراجعة": { icon: Clock, color: "bg-warning/10 text-warning dark:bg-warning/20" },
+  "مقبول": { icon: CheckCircle, color: "bg-primary/10 text-primary dark:bg-primary/20" },
+  "مرفوض": { icon: XCircle, color: "bg-destructive/10 text-destructive dark:bg-destructive/20" },
 };
 
 const AdminReturns = () => {
   const [returns, setReturns] = useState<ReturnRequest[]>(initialReturns);
   const [selected, setSelected] = useState<ReturnRequest | null>(null);
   const [statusFilter, setStatusFilter] = useState("الكل");
+  const [search, setSearch] = useState("");
   const [adminNote, setAdminNote] = useState("");
 
-  const filtered = returns.filter(r => statusFilter === "الكل" || r.status === statusFilter);
+  const debouncedSearch = useDebounce(search, 300);
+
+  const filtered = returns.filter(r => {
+    const matchStatus = statusFilter === "الكل" || r.status === statusFilter;
+    const matchSearch = r.id.includes(debouncedSearch) || r.customer.includes(debouncedSearch) || r.product.includes(debouncedSearch);
+    return matchStatus && matchSearch;
+  });
+
+  const pagination = usePagination(filtered, { pageSize: 8 });
   const pending = returns.filter(r => r.status === "بانتظار المراجعة").length;
 
   const handleAction = (returnId: string, action: "مقبول" | "مرفوض") => {
@@ -57,20 +73,29 @@ const AdminReturns = () => {
 
         {/* Stats */}
         <div className="grid grid-cols-3 gap-3">
-          <Card><CardContent className="p-3 text-center"><Clock className="h-5 w-5 text-yellow-600 mx-auto mb-1" /><p className="text-lg font-bold text-foreground">{pending}</p><p className="text-[10px] text-muted-foreground">بانتظار المراجعة</p></CardContent></Card>
-          <Card><CardContent className="p-3 text-center"><CheckCircle className="h-5 w-5 text-green-600 mx-auto mb-1" /><p className="text-lg font-bold text-foreground">{returns.filter(r => r.status === "مقبول").length}</p><p className="text-[10px] text-muted-foreground">مقبول</p></CardContent></Card>
+          <Card><CardContent className="p-3 text-center"><Clock className="h-5 w-5 text-warning mx-auto mb-1" /><p className="text-lg font-bold text-foreground">{pending}</p><p className="text-[10px] text-muted-foreground">بانتظار المراجعة</p></CardContent></Card>
+          <Card><CardContent className="p-3 text-center"><CheckCircle className="h-5 w-5 text-primary mx-auto mb-1" /><p className="text-lg font-bold text-foreground">{returns.filter(r => r.status === "مقبول").length}</p><p className="text-[10px] text-muted-foreground">مقبول</p></CardContent></Card>
           <Card><CardContent className="p-3 text-center"><XCircle className="h-5 w-5 text-destructive mx-auto mb-1" /><p className="text-lg font-bold text-foreground">{returns.filter(r => r.status === "مرفوض").length}</p><p className="text-[10px] text-muted-foreground">مرفوض</p></CardContent></Card>
         </div>
 
-        <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="h-9 text-sm w-48"><SelectValue /></SelectTrigger>
-          <SelectContent>
-            <SelectItem value="الكل">الكل</SelectItem>
-            <SelectItem value="بانتظار المراجعة">بانتظار المراجعة</SelectItem>
-            <SelectItem value="مقبول">مقبول</SelectItem>
-            <SelectItem value="مرفوض">مرفوض</SelectItem>
-          </SelectContent>
-        </Select>
+        {/* Search & Filter */}
+        <Card><CardContent className="p-3">
+          <div className="flex flex-col sm:flex-row gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input placeholder="بحث برقم الطلب أو العميل أو المنتج..." value={search} onChange={(e) => setSearch(e.target.value)} className="pr-9 h-9 text-sm" />
+            </div>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="h-9 text-sm w-full sm:w-48"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="الكل">الكل</SelectItem>
+                <SelectItem value="بانتظار المراجعة">بانتظار المراجعة</SelectItem>
+                <SelectItem value="مقبول">مقبول</SelectItem>
+                <SelectItem value="مرفوض">مرفوض</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </CardContent></Card>
 
         <Card>
           <CardContent className="p-0">
@@ -87,9 +112,9 @@ const AdminReturns = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filtered.length === 0 ? (
-                    <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">لا توجد طلبات إرجاع</TableCell></TableRow>
-                  ) : filtered.map((ret) => (
+                  {pagination.paginatedItems.length === 0 ? (
+                    <TableRow><TableCell colSpan={6} className="p-0"><AdminEmptyState title="لا توجد طلبات إرجاع" description="جرب تغيير كلمات البحث أو الفلتر" /></TableCell></TableRow>
+                  ) : pagination.paginatedItems.map((ret) => (
                     <TableRow key={ret.id}>
                       <TableCell><span className="text-sm font-mono font-medium text-foreground">{ret.id}</span><p className="text-[10px] text-muted-foreground">{ret.date}</p></TableCell>
                       <TableCell className="text-sm text-foreground">{ret.customer}</TableCell>
@@ -103,6 +128,7 @@ const AdminReturns = () => {
               </Table>
             </div>
           </CardContent>
+          <AdminTablePagination {...pagination} />
         </Card>
 
         <Dialog open={!!selected} onOpenChange={() => setSelected(null)}>
@@ -131,7 +157,7 @@ const AdminReturns = () => {
                       <Textarea placeholder="أضف ملاحظة..." className="text-sm" rows={2} value={adminNote} onChange={(e) => setAdminNote(e.target.value)} />
                     </div>
                     <div className="flex gap-2">
-                      <Button size="sm" className="flex-1 bg-green-600 hover:bg-green-700 text-white gap-1" onClick={() => handleAction(selected.id, "مقبول")}><CheckCircle className="h-4 w-4" /> قبول الإرجاع</Button>
+                      <Button size="sm" className="flex-1 gap-1" onClick={() => handleAction(selected.id, "مقبول")}><CheckCircle className="h-4 w-4" /> قبول الإرجاع</Button>
                       <Button size="sm" variant="destructive" className="flex-1 gap-1" onClick={() => handleAction(selected.id, "مرفوض")}><XCircle className="h-4 w-4" /> رفض</Button>
                     </div>
                   </>

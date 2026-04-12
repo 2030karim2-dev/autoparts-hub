@@ -2,6 +2,7 @@ import { ArrowRight, Moon, Sun, Bell, Globe, Shield, Trash2, ChevronLeft } from 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AppLayout from "@/components/layout/AppLayout";
+import { Switch } from "@/components/ui/switch";
 
 const Settings = () => {
   const navigate = useNavigate();
@@ -15,12 +16,6 @@ const Settings = () => {
     document.documentElement.classList.toggle("dark");
     setDarkMode(!darkMode);
   };
-
-  const Toggle = ({ value, onChange }: { value: boolean; onChange: () => void }) => (
-    <button onClick={onChange} className={`w-11 h-6 rounded-full transition-all relative ${value ? "bg-primary" : "bg-muted"}`}>
-      <span className={`absolute top-0.5 w-5 h-5 bg-card rounded-full shadow transition-all ${value ? "right-0.5" : "right-[calc(100%-1.375rem)]"}`} />
-    </button>
-  );
 
   return (
     <AppLayout>
@@ -38,7 +33,7 @@ const Settings = () => {
             <div className="px-4 py-3.5 flex items-center gap-3">
               {darkMode ? <Moon className="w-5 h-5 text-primary" /> : <Sun className="w-5 h-5 text-warning" />}
               <span className="text-sm font-medium flex-1">الوضع الداكن</span>
-              <Toggle value={darkMode} onChange={toggleDark} />
+              <Switch checked={darkMode} onCheckedChange={toggleDark} />
             </div>
           </div>
         </section>
@@ -70,17 +65,17 @@ const Settings = () => {
             <div className="px-4 py-3.5 flex items-center gap-3 border-b border-border">
               <Bell className="w-5 h-5 text-primary" />
               <span className="text-sm font-medium flex-1">إشعارات الدفع</span>
-              <Toggle value={pushNotifications} onChange={() => setPushNotifications(!pushNotifications)} />
+              <Switch checked={pushNotifications} onCheckedChange={() => setPushNotifications(!pushNotifications)} />
             </div>
             <div className="px-4 py-3.5 flex items-center gap-3 border-b border-border">
               <Bell className="w-5 h-5 text-primary" />
               <span className="text-sm font-medium flex-1">تحديثات الطلبات</span>
-              <Toggle value={orderUpdates} onChange={() => setOrderUpdates(!orderUpdates)} />
+              <Switch checked={orderUpdates} onCheckedChange={() => setOrderUpdates(!orderUpdates)} />
             </div>
             <div className="px-4 py-3.5 flex items-center gap-3">
               <Bell className="w-5 h-5 text-primary" />
               <span className="text-sm font-medium flex-1">العروض والخصومات</span>
-              <Toggle value={promoNotifications} onChange={() => setPromoNotifications(!promoNotifications)} />
+              <Switch checked={promoNotifications} onCheckedChange={() => setPromoNotifications(!promoNotifications)} />
             </div>
           </div>
         </section>
